@@ -2,5 +2,6 @@ version: '2'
 services:
   av:
     build: ./av
+    privileged: true
     expose:
       - "80"
