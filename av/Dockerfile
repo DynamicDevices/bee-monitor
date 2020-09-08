@@ -1,4 +1,3 @@
-
 FROM dynamicdevices/bee-monitor-base-image
 
 # Enable OpenRC
