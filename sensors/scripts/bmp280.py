@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
+import os
 import paho.mqtt.client as mqtt
+
+MQTT_SERVER = os.getenv('MQTT_SERVER')
+MQTT_PORT = os.getenv('MQTT_PORT')
+MQTT_LOGIN = os.getenv('MQTT_LOGIN')
+MQTT_PASSWORD = os.getenv('MQTT_PASSWORD') 
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -17,7 +23,8 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("mqtt.dynamicdevices.co.uk", 1883, 60)
+client.username_pw_set(MQTT_LOGIN, MQTT_PASSWORD)
+client.connect(MQTT_SERVER, MQTT_PORT, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
