@@ -5,3 +5,6 @@ services:
     privileged: true
     expose:
       - "80"
+  sensors:
+    build: ./sensors
+    privileged: true
