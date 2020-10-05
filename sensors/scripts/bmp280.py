@@ -24,7 +24,7 @@ client.on_connect = on_connect
 client.on_message = on_message
 
 client.username_pw_set(MQTT_LOGIN, MQTT_PASSWORD)
-client.connect(MQTT_SERVER, MQTT_PORT, 60)
+client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.
