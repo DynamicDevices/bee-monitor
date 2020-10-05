@@ -8,7 +8,7 @@ RUN apk add i2c-tools python3 py3-pip
 
 RUN pip install paho-mqtt
 
-COPY scripts/bmp280.sh bmp280.sh
+COPY scripts/bmp280.py bmp280.py
 COPY scripts/sleep.sh sleep.sh
 
 CMD ./sleep.sh
