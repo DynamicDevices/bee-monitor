@@ -80,6 +80,16 @@ factor = 1.2  # Smaller numbers adjust temp down, vice versa
 smooth_size = 10  # Dampens jitter due to rapid CPU temp changes
 cpu_temps = []
 
+#
+# ADPS-9960 setup
+#
+from apds9960.const import *
+from apds9960 import APDS9960
+
+# Initialise the ADPS-9960
+apds = APDS9960(bus)
+apds.enableLightSensor()
+
 while True:
 	# Connect / Reconnect up MQTT
 	if not mqtt_connected:
@@ -101,11 +111,22 @@ while True:
 	print('Temp: {:05.2f}*C Compensated Temp: {:05.2f}*C Pressure: {:05.2f}hPa Relative Humidity: {:05.2f}%'.format(raw_temp, comp_temp, pressure, humidity))
 
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp);
-
 	# Compensated temperature is not right, possibly because CPU temp is quite different
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "comensated_temperature", comp_temp);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature", comp_temp);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "relativehumidity", humidity);
+
+	# Read in values from ADPS-9960
+ 	ambient_light = apds.readAmbientLight()
+        r = apds.readRedLight()
+        g = apds.readGreenLight()
+        b = apds.readBlueLight()
+        print("AmbientLight={} (R: {}, G: {}, B: {})".format(ambient_light, r, g, b))
+
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light", ambient_light);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "red", r);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "green", g);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "blue", b);
 
 	# Process MQTT messages
 	client.loop();
