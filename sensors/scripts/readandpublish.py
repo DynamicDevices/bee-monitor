@@ -98,7 +98,7 @@ dirs = {
 # Initialise the ADPS-9960
 apds = APDS9960(bus)
 apds.enableLightSensor()
-apds.enableGestureSensor()
+#apds.enableGestureSensor()
 apds.enableProximitySensor()
 
 while True:
@@ -145,11 +145,12 @@ while True:
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity", proximity);
 
 	# Not entirely sure what use this is in the context of bees but why not!
-	if apds.isGestureAvailable():
-		motion = apds.readGesture()
-		gesture = dirs.get(motion, "unknown")
-		print("Gesture={}".format(gesture))
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "gesture", gesture);
+	# -disabled as I think it might be blocking reads
+#	if apds.isGestureAvailable():
+#		motion = apds.readGesture()
+#		gesture = dirs.get(motion, "unknown")
+#		print("Gesture={}".format(gesture))
+#		client.publish(MQTT_TOPIC_PREFIX_STATE + "gesture", gesture);
 
 	# Process MQTT messages
 	client.loop();
