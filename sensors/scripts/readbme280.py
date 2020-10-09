@@ -34,7 +34,7 @@ client.on_message = on_message
 client.username_pw_set(MQTT_LOGIN, MQTT_PASSWORD)
 
 import time
-from bmp280 import BMP280
+from bme280 import BME280
 
 try:
     from smbus2 import SMBus
@@ -47,16 +47,22 @@ Press Ctrl+C to exit!
 
 # Initialise the BMP280
 bus = SMBus(1)
-bmp280 = BMP280(i2c_dev=bus, i2c_addr=0x77)
+bme280 = BME280(i2c_dev=bus)
 
 while True:
+	# Connect / Reconnect up MQTT
         if not mqtt_connected:
-                client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
+		client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
 
-        temperature = bmp280.get_temperature()
-        pressure = bmp280.get_pressure()
-        print('{:05.2f}*C {:05.2f}hPa'.format(temperature, pressure))
-        time.sleep(1)
+	# Read in values from BME280 (todo: Look at if we can improve accuracy/use IIR
+	temperature = bme280.get_temperature()
+	pressure = bme280.get_pressure()
+	humidity = bme280.get_humidity()
+	print('{:05.2f}*C {:05.2f}hPa {:05.2f}%'.format(temperature, pressure, humidity))
 
+	# Process MQTT messages
         client.loop();
+
+	# Wait a bit
+        time.sleep(1)
 
