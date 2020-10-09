@@ -106,6 +106,17 @@ while True:
 	if not mqtt_connected:
 		client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
 
+		# Setup some retained values for units
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature/units", "°C", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature/units", "°C", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure/units", "hPa", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity/units", "%", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light/units", "byte", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "red/units", "byte", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "green/units", "byte", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue/units", "byte", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity/units", "byte", Retain=True);
+
 	# Read in values from BME280 (todo: Look at if we can improve accuracy/use IIR
 	cpu_temp = get_cpu_temperature()
 	cpu_temps.append(cpu_temp)
@@ -125,7 +136,7 @@ while True:
 	# Compensated temperature is not right, possibly because CPU temp is quite different
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature", comp_temp);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "relativehumidity", humidity);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity", humidity);
 
 	# Read in values from ADPS-9960
 	ambient_light = apds.readAmbientLight()
