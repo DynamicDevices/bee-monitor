@@ -117,11 +117,11 @@ while True:
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "relativehumidity", humidity);
 
 	# Read in values from ADPS-9960
- 	ambient_light = apds.readAmbientLight()
-        r = apds.readRedLight()
-        g = apds.readGreenLight()
-        b = apds.readBlueLight()
-        print("AmbientLight={} (R: {}, G: {}, B: {})".format(ambient_light, r, g, b))
+	ambient_light = apds.readAmbientLight()
+	r = apds.readRedLight()
+	g = apds.readGreenLight()
+	b = apds.readBlueLight()
+	print("AmbientLight={} (R: {}, G: {}, B: {})".format(ambient_light, r, g, b))
 
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light", ambient_light);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "red", r);
