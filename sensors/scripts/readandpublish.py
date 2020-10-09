@@ -99,6 +99,7 @@ dirs = {
 apds = APDS9960(bus)
 apds.enableLightSensor()
 apds.enableGestureSensor()
+apds.enableProximitySensor()
 
 while True:
 	# Connect / Reconnect up MQTT
@@ -137,6 +138,11 @@ while True:
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "red", r);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "green", g);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "blue", b);
+
+	# Measure proximity
+	proximity = apds.readProximity()
+	print("Proximity={}".format(proximity))
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity", proximity);
 
 	# Not entirely sure what use this is in the context of bees but why not!
 	if apds.isGestureAvailable():
