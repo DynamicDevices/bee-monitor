@@ -8,7 +8,7 @@ RUN apk add i2c-tools python3 py3-pip
 
 RUN pip install paho-mqtt pimoroni-bme280 smbus2 apds9960
 
-COPY scripts/readbme280.py readbme280.py
+COPY scripts/readandpublish.py readandpublish.py
 COPY scripts/sleep.sh sleep.sh
 
 CMD ./sleep.sh
