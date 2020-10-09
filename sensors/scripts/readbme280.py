@@ -13,7 +13,9 @@ from subprocess import PIPE, Popen
 def get_cpu_temperature():
 	process = Popen(['/opt/vc/bin/vcgencmd', 'measure_temp'], stdout=PIPE)
 	output, _error = process.communicate()
-	return float(output[output.index('=') + 1:output.rindex("'")])
+	output = output.decode('utf-8')
+	temp = output[(output.index('=') + 1):output.rindex("'")]
+	return float(temp)
 
 # ------------------------------
 
@@ -91,14 +93,16 @@ while True:
         	cpu_temps = cpu_temps[1:]
 
 	smoothed_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
-	raw_temperature = bme280.get_temperature()
+	raw_temp = bme280.get_temperature()
 	comp_temp = raw_temp - ((smoothed_cpu_temp - raw_temp) / factor)
 
 	pressure = bme280.get_pressure()
 	humidity = bme280.get_humidity()
-	print('Temp: {:05.2f}*C Compensated Temp: {:05.2f}*C Pressure: {:05.2f}hPa Relative Humidity: {:05.2f}%'.format(raw_temperature, comp_temp, pressure, humidity))
+	print('Temp: {:05.2f}*C Compensated Temp: {:05.2f}*C Pressure: {:05.2f}hPa Relative Humidity: {:05.2f}%'.format(raw_temp, comp_temp, pressure, humidity))
 
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temperature);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp);
+
+	# Compensated temperature is not right, possibly because CPU temp is quite different
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "comensated_temperature", comp_temp);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
 	client.publish(MQTT_TOPIC_PREFIX_STATE + "relativehumidity", humidity);
