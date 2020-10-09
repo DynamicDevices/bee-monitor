@@ -5,7 +5,9 @@ import paho.mqtt.client as mqtt
 MQTT_SERVER = os.getenv('MQTT_SERVER')
 MQTT_PORT = os.getenv('MQTT_PORT')
 MQTT_LOGIN = os.getenv('MQTT_LOGIN')
-MQTT_PASSWORD = os.getenv('MQTT_PASSWORD') 
+MQTT_PASSWORD = os.getenv('MQTT_PASSWORD')
+MQTT_TOPIC_PREFIX = "BeeHiveMonitor/1/"
+MQTT_TOPIC_PREFIX_STATE = MQTT_TOPIC_PREFIX + "state/"
 
 mqtt_connected = False;
 
@@ -47,7 +49,7 @@ Press Ctrl+C to exit!
 
 # Initialise the BMP280
 bus = SMBus(1)
-bme280 = BME280(i2c_dev=bus)
+bme280 = BME280(i2c_dev=bus, i2c_addr=0x77)
 
 while True:
 	# Connect / Reconnect up MQTT
@@ -58,11 +60,14 @@ while True:
 	temperature = bme280.get_temperature()
 	pressure = bme280.get_pressure()
 	humidity = bme280.get_humidity()
-	print('{:05.2f}*C {:05.2f}hPa {:05.2f}%'.format(temperature, pressure, humidity))
+	print('Temp: {:05.2f}*C Pressure: {:05.2f}hPa Relative Humidity: {:05.2f}%'.format(temperature, pressure, humidity))
+
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", temperature);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
+	client.publish(MQTT_TOPIC_PREFIX_STATE + "relativehumidity", humidity);
 
 	# Process MQTT messages
 	client.loop();
 
 	# Wait a bit
- 	time.sleep(1)
-
+	time.sleep(1)
