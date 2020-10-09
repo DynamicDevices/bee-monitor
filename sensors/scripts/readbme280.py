@@ -51,7 +51,7 @@ bme280 = BME280(i2c_dev=bus)
 
 while True:
 	# Connect / Reconnect up MQTT
-        if not mqtt_connected:
+	if not mqtt_connected:
 		client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
 
 	# Read in values from BME280 (todo: Look at if we can improve accuracy/use IIR
@@ -61,8 +61,8 @@ while True:
 	print('{:05.2f}*C {:05.2f}hPa {:05.2f}%'.format(temperature, pressure, humidity))
 
 	# Process MQTT messages
-        client.loop();
+	client.loop();
 
 	# Wait a bit
-        time.sleep(1)
+ 	time.sleep(1)
 
