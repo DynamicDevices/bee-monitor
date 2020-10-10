@@ -28,20 +28,25 @@ MQTT_PORT = os.getenv('MQTT_PORT')
 MQTT_LOGIN = os.getenv('MQTT_LOGIN')
 MQTT_PASSWORD = os.getenv('MQTT_PASSWORD')
 MQTT_TOPIC_PREFIX = "BeeHiveMonitor/1/"
+MQTT_TOPIC_PREFIX_CMD = MQTT_TOPIC_PREFIX + "cmd/"
 MQTT_TOPIC_PREFIX_STATE = MQTT_TOPIC_PREFIX + "state/"
+
+I2C_BUS = int(os.getenv('I2C_BUS'))
 
 mqtt_connected = False;
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
+    global mqtt_connected;
     mqtt_connected = True;
     print("Connected with result code "+str(rc))
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("$SYS/#")
+    client.subscribe(MQTT_TOPIC_PREFIX_CMD)
 
 def on_disconnect(client, userdata, rc):
+    global mqtt_connected;
     mqtt_connected = False;
     print("Disconnected with result code "+str(rc))
 
@@ -73,7 +78,7 @@ Press Ctrl+C to exit!
 """)
 
 # Initialise the BME280
-bus = SMBus(1)
+bus = SMBus(I2C_BUS)
 bme280 = BME280(i2c_dev=bus, i2c_addr=0x77)
 
 factor = 1.2  # Smaller numbers adjust temp down, vice versa
@@ -104,18 +109,20 @@ apds.enableProximitySensor()
 while True:
 	# Connect / Reconnect up MQTT
 	if not mqtt_connected:
+		print("Connecting to broker")
+
 		client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
 
 		# Setup some retained values for units
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature/units", "°C", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature/units", "°C", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure/units", "hPa", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity/units", "%", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light/units", "byte", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "red/units", "byte", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "green/units", "byte", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue/units", "byte", Retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity/units", "byte", Retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature/units", "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature/units", "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure/units", "hPa", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity/units", "%", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light/units", "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "red/units", "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "green/units", "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue/units", "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity/units", "byte", retain=True);
 
 	# Read in values from BME280 (todo: Look at if we can improve accuracy/use IIR
 	cpu_temp = get_cpu_temperature()
