@@ -97,4 +97,11 @@ Currently supported sensors are as follows:
 70: -- -- -- -- -- -- -- 77     
 ```
 
-TBD
+NB. All these sensors are 3V3 as we can't connect 5V sensors directly to the Raspberry Pi GPIO
+
+| Sensor ID | Sensor Name                                                                             |
+| --------- | --------------------------------------------------------------------------------------- |
+| 0x39,0x77 | WINGONEER® Temperature, Barometric, Altitude, Light, Humidity Five in One Sensor Module |
+| 0x68      | MakerHawk MPU-9250 9DOF Module 9 Axis Gyroscope Accelerometer Magnetic Field Sensor     |
+| 0x4A      | GY-49-MAX44009 Digital Optical Intensity Flow Sensor                                    |
+| 0x33      | Sparkfun MLX90640 IR array                                                              |
