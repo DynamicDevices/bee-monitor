@@ -100,11 +100,15 @@ dirs = {
     APDS9960_DIR_NEAR: "near",
     APDS9960_DIR_FAR: "far",
 }
-# Initialise the ADPS-9960
-apds = APDS9960(bus)
-apds.enableLightSensor()
-#apds.enableGestureSensor()
-apds.enableProximitySensor()
+
+try
+	# Initialise the ADPS-9960
+	apds = APDS9960(bus)
+	apds.enableLightSensor()
+	#apds.enableGestureSensor()
+	apds.enableProximitySensor()
+except:
+	print("No ADPS-9960 detected")
 
 while True:
 	# Connect / Reconnect up MQTT
@@ -125,50 +129,58 @@ while True:
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity/units", "byte", retain=True);
 
 	# Read in values from BME280 (todo: Look at if we can improve accuracy/use IIR
-	cpu_temp = get_cpu_temperature()
-	cpu_temps.append(cpu_temp)
+	try:
+		cpu_temp = get_cpu_temperature()
+		cpu_temps.append(cpu_temp)
 
-	if len(cpu_temps) > smooth_size:
-        	cpu_temps = cpu_temps[1:]
+		if len(cpu_temps) > smooth_size:
+	        	cpu_temps = cpu_temps[1:]
 
-	smoothed_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
-	raw_temp = bme280.get_temperature()
-	comp_temp = raw_temp - ((smoothed_cpu_temp - raw_temp) / factor)
+		smoothed_cpu_temp = sum(cpu_temps) / float(len(cpu_temps))
+		raw_temp = bme280.get_temperature()
+		comp_temp = raw_temp - ((smoothed_cpu_temp - raw_temp) / factor)
 
-	pressure = bme280.get_pressure()
-	humidity = bme280.get_humidity()
-	print('Temp: {:05.2f}*C Compensated Temp: {:05.2f}*C Pressure: {:05.2f}hPa Relative Humidity: {:05.2f}%'.format(raw_temp, comp_temp, pressure, humidity))
+		pressure = bme280.get_pressure()
+		humidity = bme280.get_humidity()
+		print('Temp: {:05.2f}*C Compensated Temp: {:05.2f}*C Pressure: {:05.2f}hPa Relative Humidity: {:05.2f}%'.format(raw_temp, comp_temp, pressure, humidity))
 
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp);
-	# Compensated temperature is not right, possibly because CPU temp is quite different
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature", comp_temp);
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity", humidity);
+		# TODO: Work out how to calculate relative altitude. QNH ? METAR ?
+
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp);
+		# Compensated temperature is not right, possibly because CPU temp is quite different
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature", comp_temp);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity", humidity);
+	except:
+		pass
 
 	# Read in values from ADPS-9960
-	ambient_light = apds.readAmbientLight()
-	r = apds.readRedLight()
-	g = apds.readGreenLight()
-	b = apds.readBlueLight()
-	print("AmbientLight={} (R: {}, G: {}, B: {})".format(ambient_light, r, g, b))
+	try:
+		ambient_light = apds.readAmbientLight()
+		r = apds.readRedLight()
+		g = apds.readGreenLight()
+		b = apds.readBlueLight()
+		print("AmbientLight={} (R: {}, G: {}, B: {})".format(ambient_light, r, g, b))
 
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light", ambient_light);
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "red", r);
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "green", g);
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "blue", b);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light", ambient_light);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "red", r);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "green", g);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue", b);
 
-	# Measure proximity
-	proximity = apds.readProximity()
-	print("Proximity={}".format(proximity))
-	client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity", proximity);
+		# Measure proximity
+		proximity = apds.readProximity()
+		print("Proximity={}".format(proximity))
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity", proximity);
 
-	# Not entirely sure what use this is in the context of bees but why not!
-	# -disabled as I think it might be blocking reads
-#	if apds.isGestureAvailable():
-#		motion = apds.readGesture()
-#		gesture = dirs.get(motion, "unknown")
-#		print("Gesture={}".format(gesture))
-#		client.publish(MQTT_TOPIC_PREFIX_STATE + "gesture", gesture);
+		# Not entirely sure what use this is in the context of bees but why not!
+		# -disabled as I think it might be blocking reads
+#		if apds.isGestureAvailable():
+#			motion = apds.readGesture()
+#			gesture = dirs.get(motion, "unknown")
+#			print("Gesture={}".format(gesture))
+#			client.publish(MQTT_TOPIC_PREFIX_STATE + "gesture", gesture);
+	except:
+		pass
 
 	# Process MQTT messages
 	client.loop();
