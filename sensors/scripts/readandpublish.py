@@ -148,7 +148,7 @@ while True:
 		raw_temp = bme180.read_temperature()
 		pressure = bme180.read_pressure()
 		altitude = bme180.read_altitude()
-		sealevel_pressure = bmp180.read_sealevel_pressure()
+		sealevel_pressure = bme180.read_sealevel_pressure()
 
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp)
 		# Compensated temperature is not right, possibly because CPU temp is quite different
@@ -217,4 +217,4 @@ while True:
 	client.loop();
 
 	# Wait a bit
-	time.sleep(1)
+	time.sleep(5)
