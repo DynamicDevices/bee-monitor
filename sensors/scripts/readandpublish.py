@@ -102,7 +102,7 @@ dirs = {
     APDS9960_DIR_FAR: "far",
 }
 
-try
+try:
 	# Initialise the ADPS-9960
 	apds = APDS9960(bus)
 	apds.enableLightSensor()
@@ -120,7 +120,7 @@ while True:
 
 		# TODO: Check failure here
 		while not mqtt_connected:
-			time.sleep(1)
+			client.loop()
 
 		# Setup some retained values for units
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature/units", "°C", retain=True);
