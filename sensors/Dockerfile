@@ -4,7 +4,7 @@ FROM dynamicdevices/bee-monitor-base-image
 # Enable OpenRC
 ENV INITSYSTEM on 
 
-RUN apk add i2c-tools python3 py3-pip git gcc python3-dev
+RUN apk --no-cache add i2c-tools python3 py3-pip git gcc python3-dev musl-dev
 
 RUN pip install paho-mqtt pimoroni-bme280 smbus2 apds9960
 
