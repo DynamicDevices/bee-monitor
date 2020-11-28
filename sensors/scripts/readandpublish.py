@@ -59,7 +59,8 @@ client.on_connect = on_connect
 client.on_disconnect = on_disconnect
 client.on_message = on_message
 
-client.username_pw_set(MQTT_LOGIN, MQTT_PASSWORD)
+if len(MQTT_LOGIN) > 0 and len(MQTT_PASSWORD) > 0:
+	client.username_pw_set(MQTT_LOGIN, MQTT_PASSWORD)
 
 #
 # BME280 setup
@@ -116,6 +117,10 @@ while True:
 		print("Connecting to broker")
 
 		client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
+
+		# TODO: Check failure here
+		while not mqtt_connected:
+			time.sleep(1)
 
 		# Setup some retained values for units
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature/units", "°C", retain=True);
