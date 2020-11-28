@@ -63,6 +63,11 @@ if len(MQTT_LOGIN) > 0 and len(MQTT_PASSWORD) > 0:
 	client.username_pw_set(MQTT_LOGIN, MQTT_PASSWORD)
 
 #
+# BME180 setup
+#
+import Adafruit_BMP.BMP085 as BMP085
+
+#
 # BME280 setup
 #
 
@@ -77,6 +82,9 @@ except ImportError:
 print("""temperature-and-pressure.py - Displays the temperature and pressure.
 Press Ctrl+C to exit!
 """)
+
+# Initialise the BME180
+bme180 = BMP085.BMP085(busnum=I2C_BUS)
 
 # Initialise the BME280
 bus = SMBus(I2C_BUS)
@@ -126,12 +134,30 @@ while True:
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature/units", "°C", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature/units", "°C", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure/units", "hPa", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "sealevel_pressure/units", "hPa", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity/units", "%", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "altitude/units", "m", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light/units", "byte", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "red/units", "byte", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "green/units", "byte", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue/units", "byte", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity/units", "byte", retain=True);
+
+	# Read in values from BME180
+	try:
+		raw_temp = bme180.read_temperature()
+		pressure = bme180.read_pressure()
+		altitude = bme180.read_altitude()
+		sealevel_pressure = bmp180.read_sealevel_pressure()
+
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp)
+		# Compensated temperature is not right, possibly because CPU temp is quite different
+		#client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature", comp_temp);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure)
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "altitude", altitude)
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "sealevel_pressure", sealevel_pressure)
+	except:
+		pass
 
 	# Read in values from BME280 (todo: Look at if we can improve accuracy/use IIR
 	try:
