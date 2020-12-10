@@ -1,6 +1,8 @@
 
 #!/bin/sh
 
+amixer -c 1 set "Mic" 100%
+
 while [ True ];
 do
 
