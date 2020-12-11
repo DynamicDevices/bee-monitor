@@ -5,6 +5,10 @@ services:
     privileged: true
     expose:
       - "80"
+    volumes:
+      - /data:/data
   sensors:
     build: ./sensors
     privileged: true
+    volumes:
+      - /data:/data
