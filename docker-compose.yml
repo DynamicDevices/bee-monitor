@@ -6,9 +6,11 @@ services:
     expose:
       - "80"
     volumes:
-      - /data:/data
+      - shared-data:/data
   sensors:
     build: ./sensors
     privileged: true
     volumes:
-      - /data:/data
+      - shared-data:/data
+volumes:
+  shared-data:
