@@ -83,6 +83,10 @@ print("""temperature-and-pressure.py - Displays the temperature and pressure.
 Press Ctrl+C to exit!
 """)
 
+# MPU9250 setup
+from mpu9250_jmdev.registers import *
+from mpu9250_jmdev.mpu_9250 import MPU9250
+
 # Initialise the BME180
 bme180 = BMP085.BMP085(busnum=I2C_BUS)
 
@@ -118,6 +122,24 @@ try:
 	apds.enableProximitySensor()
 except:
 	print("No ADPS-9960 detected")
+
+#
+# MPU9250 setup
+#
+try:
+	mpu = MPU9250(
+	address_ak=AK8963_ADDRESS,
+	address_mpu_master=MPU9050_ADDRESS_68, # In 0x68 Address
+	address_mpu_slave=None,
+	bus=1,
+	gfs=GFS_1000,
+	afs=AFS_8G,
+	mfs=AK8963_BIT_16,
+	mode=AK8963_MODE_C100HZ)
+
+	mpu.configure() # Apply the settings to the registers.
+except:
+	print("No MPU9250 detected")
 
 while True:
 	# Connect / Reconnect up MQTT
@@ -210,6 +232,17 @@ while True:
 #			gesture = dirs.get(motion, "unknown")
 #			print("Gesture={}".format(gesture))
 #			client.publish(MQTT_TOPIC_PREFIX_STATE + "gesture", gesture);
+	except:
+		pass
+
+	# Read in values from MPU9250
+	try:
+		print("|.....MPU9250 in 0x68 Address.....|")
+		print("Accelerometer", mpu.readAccelerometerMaster())
+		print("Gyroscope", mpu.readGyroscopeMaster())
+		print("Magnetometer", mpu.readMagnetometerMaster())
+		print("Temperature", mpu.readTemperatureMaster())
+		print("\n")
 	except:
 		pass
 
