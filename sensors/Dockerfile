@@ -10,6 +10,8 @@ RUN pip install paho-mqtt pimoroni-bme280 smbus2 apds9960 mpu9250-jmdev
 
 RUN git clone https://github.com/adafruit/Adafruit_Python_BMP.git && cd Adafruit_Python_BMP && python3 setup.py install
 
+RUN git clone https://github.com/josecastroleon/max44009.git && cp max44009/max44009.py .
+
 COPY scripts/ .
 
 CMD ./autorun.sh

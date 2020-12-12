@@ -33,6 +33,8 @@ MQTT_TOPIC_PREFIX_STATE = MQTT_TOPIC_PREFIX + "state/"
 
 I2C_BUS = int(os.getenv('I2C_BUS'))
 
+UNITS_SUFFIX = "/units"
+
 mqtt_connected = False;
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -141,6 +143,20 @@ try:
 except:
 	print("No MPU9250 detected")
 
+#
+# MAX44009 setup
+#
+import max44009
+
+try:
+	max_sensor = max44009.MAX44009(1, 0x4a)
+	max_sensor.configure(cont=0, manual=0, cdr=0, timer=0)
+except:
+	print("No MAX44009 detected")
+
+#
+# Main loop
+#
 while True:
 	# Connect / Reconnect up MQTT
 	if not mqtt_connected:
@@ -158,29 +174,30 @@ while True:
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "status", "online", retain=True);
 
 		# Setup some retained values for units
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_cpu/units", "°C", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme180/units", "°C", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme280/units", "°C", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature_bme280/units", "°C", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure/units", "hPa", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "sealevel_pressure/units", "hPa", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity/units", "%", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "altitude/units", "m", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light/units", "byte", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "red/units", "byte", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "green/units", "byte", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue/units", "byte", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity/units", "byte", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_x", "g", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_y", "g", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_z", "g", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_x", "°/s", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_y", "°/s", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_z", "°/s", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_x", "µT", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_y", "µT", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_z", "µT", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_mpu9250", "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_cpu" + UNITS_SUFFIX, "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme180" + UNITS_SUFFIX, "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme280" + UNITS_SUFFIX, "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature_bme280" + UNITS_SUFFIX, "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure" + UNITS_SUFFIX, "hPa", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "sealevel_pressure" + UNITS_SUFFIX, "hPa", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity" + UNITS_SUFFIX, "%", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "altitude" + UNITS_SUFFIX, "m", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "ambient_light" + UNITS_SUFFIX, "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "red" + UNITS_SUFFIX, "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "green" + UNITS_SUFFIX, "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue" + UNITS_SUFFIX, "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity" + UNITS_SUFFIX, "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_x" + UNITS_SUFFIX, "g", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_y" + UNITS_SUFFIX, "g", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_z" + UNITS_SUFFIX, "g", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_x" + UNITS_SUFFIX, "°/s", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_y" + UNITS_SUFFIX, "°/s", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_z" + UNITS_SUFFIX, "°/s", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_x" + UNITS_SUFFIX, "µT", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_y" + UNITS_SUFFIX, "µT", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_z" + UNITS_SUFFIX, "µT", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_mpu9250" + UNITS_SUFFIX, "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "luminance" + UNITS_SUFFIX, "lux", retain=True);
 
 	# Read in values from BME180
 	try:
@@ -270,6 +287,14 @@ while True:
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_z", magneto_z);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_mpu9250", temp);
 
+	except:
+		pass
+
+	# Read in values from MAX44009
+	try:
+		luminance =  max_sensor.luminosity()
+
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "luminance", luminance);
 	except:
 		pass
 
