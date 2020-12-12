@@ -146,11 +146,16 @@ while True:
 	if not mqtt_connected:
 		print("Connecting to broker")
 
+		# Set LWT
+		client.will_set(MQTT_TOPIC_PREFIX_STATE + "status", "offline", retain=True);
 		client.connect(MQTT_SERVER, int(MQTT_PORT), 60)
 
 		# TODO: Check failure here
 		while not mqtt_connected:
 			client.loop()
+
+		# Send birth certificate
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "status", "online", retain=True);
 
 		# Setup some retained values for units
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_cpu/units", "°C", retain=True);
