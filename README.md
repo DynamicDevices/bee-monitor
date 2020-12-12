@@ -113,7 +113,7 @@ NB. All these sensors are 3V3 as we can't connect 5V sensors directly to the Ras
 
 | Sensor ID | Sensor Name                                                                             | Info |
 | --------- | --------------------------------------------------------------------------------------- | ---- |
-| 0x39,0x77 | WINGONEER® Temperature, Barometric, Altitude, Light, Humidity Five in One Sensor Module | Not installed - BME180 instead currently |
+| 0x39,0x77 | WINGONEER® Temperature, Barometric, Altitude, Light, Humidity Five in One Sensor Module | Not installed - BME180 instead and publishing currently |
 | 0x68      | MakerHawk MPU-9250 9DOF Module 9 Axis Gyroscope Accelerometer Magnetic Field Sensor     | Publishing data |
 | 0x4A      | GY-49-MAX44009 Digital Optical Intensity Flow Sensor                                    | Installed - not publishing |
 | 0x33      | Sparkfun MLX90640 IR array                                                              | Installed - not publishing |
