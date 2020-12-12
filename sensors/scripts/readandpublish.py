@@ -153,8 +153,10 @@ while True:
 			client.loop()
 
 		# Setup some retained values for units
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature/units", "°C", retain=True);
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature/units", "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_cpu/units", "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme180/units", "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme280/units", "°C", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature_bme280/units", "°C", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure/units", "hPa", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "sealevel_pressure/units", "hPa", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity/units", "%", retain=True);
@@ -164,6 +166,16 @@ while True:
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "green/units", "byte", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "blue/units", "byte", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "proximity/units", "byte", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_x", "g", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_y", "g", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_z", "g", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_x", "°/s", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_y", "°/s", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_z", "°/s", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_x", "µT", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_y", "µT", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_z", "µT", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_mpu9250", "°C", retain=True);
 
 	# Read in values from BME180
 	try:
@@ -172,7 +184,7 @@ while True:
 		altitude = bme180.read_altitude()
 		sealevel_pressure = bme180.read_sealevel_pressure()
 
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp)
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme180", raw_temp)
 		# Compensated temperature is not right, possibly because CPU temp is quite different
 		#client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature", comp_temp);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure)
@@ -199,9 +211,9 @@ while True:
 
 		# TODO: Work out how to calculate relative altitude. QNH ? METAR ?
 
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature", raw_temp);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme280", raw_temp);
 		# Compensated temperature is not right, possibly because CPU temp is quite different
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature", comp_temp);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature_bme280", comp_temp);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity", humidity);
 	except:
@@ -237,12 +249,22 @@ while True:
 
 	# Read in values from MPU9250
 	try:
-		print("|.....MPU9250 in 0x68 Address.....|")
-		print("Accelerometer", mpu.readAccelerometerMaster())
-		print("Gyroscope", mpu.readGyroscopeMaster())
-		print("Magnetometer", mpu.readMagnetometerMaster())
-		print("Temperature", mpu.readTemperatureMaster())
-		print("\n")
+		acc_x,acc_y,acc_z = mpu.readAccelerometerMaster()
+		gyro_x,gyro_y,gyro_z = mpu.readGyroscopeMaster()
+		magneto_x,magneto_y,magneto_z = mpu.readMagnetometerMaster()
+		temp = mpu.readTemperatureMaster()
+
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_x", acc_x);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_y", acc_y);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "accelerometer_z", acc_z);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_x", gyro_x);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_y", gyro_y);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "gyroscope_z", gyro_z);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_x", magneto_x);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_y", magneto_y);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_z", magneto_z);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_mpu9250", temp);
+
 	except:
 		pass
 
