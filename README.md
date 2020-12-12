@@ -3,6 +3,8 @@
 
 Project to monitor hives with B4Biodiversity, initially based at DoES Liverpool.
 
+You can see (and hear!)  the initial Live Stream on [YouTube](https://youtu.be/LGgOInSjnQQ)
+ 
 The architecture is as follows:
 
 - Raspberry Pi 4 4GB with Power over Ethernet hat providing power to the system.
@@ -81,6 +83,16 @@ BeeHiveMonitor/1/state/blue 149
 BeeHiveMonitor/1/state/proximity 13
 ```
 
+## Viewing the telemetry data
+
+With current settings you can subscribe to the data with the following command
+
+```
+mosquitto_sub -v -h mqtt.dynamicdevices.co.uk -t "BeeHiveMonitor/#"
+```
+
+## Supported Sensors
+
 Currently supported sensors are as follows:
 
 `i2cdetect ${bus}`
@@ -99,9 +111,9 @@ Currently supported sensors are as follows:
 
 NB. All these sensors are 3V3 as we can't connect 5V sensors directly to the Raspberry Pi GPIO
 
-| Sensor ID | Sensor Name                                                                             |
-| --------- | --------------------------------------------------------------------------------------- |
-| 0x39,0x77 | WINGONEER® Temperature, Barometric, Altitude, Light, Humidity Five in One Sensor Module |
-| 0x68      | MakerHawk MPU-9250 9DOF Module 9 Axis Gyroscope Accelerometer Magnetic Field Sensor     |
-| 0x4A      | GY-49-MAX44009 Digital Optical Intensity Flow Sensor                                    |
-| 0x33      | Sparkfun MLX90640 IR array                                                              |
+| Sensor ID | Sensor Name                                                                             | Info |
+| --------- | --------------------------------------------------------------------------------------- | ---- |
+| 0x39,0x77 | WINGONEER® Temperature, Barometric, Altitude, Light, Humidity Five in One Sensor Module | Not installed - BME180 instead currently |
+| 0x68      | MakerHawk MPU-9250 9DOF Module 9 Axis Gyroscope Accelerometer Magnetic Field Sensor     | Publishing data |
+| 0x4A      | GY-49-MAX44009 Digital Optical Intensity Flow Sensor                                    | Installed - not publishing |
+| 0x33      | Sparkfun MLX90640 IR array                                                              | Installed - not publishing |
