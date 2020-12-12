@@ -155,6 +155,17 @@ except:
 	print("No MAX44009 detected")
 
 #
+# MLX90640 setup
+#
+import seeed_mlx90640
+
+try:
+	mlx = seeed_mlx90640.grove_mxl90640()
+	mlx.refresh_rate = seeed_mlx90640.RefreshRate.REFRESH_8_HZ  # The fastest for raspberry 4
+except:
+	print("No MX90640 detected")
+
+#
 # Main loop
 #
 while True:
@@ -198,6 +209,7 @@ while True:
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "magnetometer_z" + UNITS_SUFFIX, "µT", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_mpu9250" + UNITS_SUFFIX, "°C", retain=True);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "luminance" + UNITS_SUFFIX, "lux", retain=True);
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "ir_frame" + UNITS_SUFFIX, "byte[]", retain=True);
 
 	# Read in values from BME180
 	try:
@@ -295,6 +307,13 @@ while True:
 		luminance =  max_sensor.luminosity()
 
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "luminance", luminance);
+	except:
+		pass
+
+	# Read in values from MLX90640
+	try:
+		 mlx.getFrame(frame)
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "ir_frame", mlx);
 	except:
 		pass
 
