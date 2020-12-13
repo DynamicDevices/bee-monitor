@@ -9,6 +9,7 @@ RUN pip install rpi.gpio
 ENV INITSYSTEM on 
 
 COPY scripts .
+COPY *.ttf .
 
 CMD ./autorun.sh 
 

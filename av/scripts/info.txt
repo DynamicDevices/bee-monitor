@@ -1,0 +1,4 @@
+Tapestry BeeCam %{gmtime}
+Temp: 0 °C
+Pressure: 0 hPa
+Luminance: 0 lux

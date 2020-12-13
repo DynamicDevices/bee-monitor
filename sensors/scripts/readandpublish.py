@@ -318,6 +318,14 @@ while True:
 	except:
 		pass
 
+	# Now write to file
+	f = open("/data/info.txt.new", "w")
+	f.write("Tapestry BeeCam %{gmtime}\r\n" + "Temp: {} °C\r\nPressure: {} hPa\r\nLuminance: {} lux".format(raw_temp, pressure, luminance))
+	f.flush()
+	os.fsync(f.fileno())
+	f.close()
+	os.rename("/data/info.txt.new", "/data/info.txt")
+
 	# Process MQTT messages
 	client.loop();
 
