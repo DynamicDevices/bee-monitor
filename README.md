@@ -14,6 +14,8 @@ The architecture is as follows:
 
 The software is based upon the Balena Docker framework which gives us containerisation and remote access to the Raspberry Pi for updates and configuration
 
+The hardware and sensors we've used are all documented [here](https://docs.google.com/spreadsheets/d/1hY-etsIJNC_ZLlRN6wujNqhEhVUt7ppHE7utuugSbvE/edit?usp=sharing)
+
 We have two containers configured at this time both are based on an Alpine Linux image which is built seperately with dependencies needed (e.g. accelerated FFMPEG).
 
 # Base container image
