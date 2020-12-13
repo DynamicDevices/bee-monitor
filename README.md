@@ -3,6 +3,8 @@
 
 Project to monitor hives with B4Biodiversity, initially based at DoES Liverpool.
 
+![Bee Pic](https://github.com/DynamicDevices/bee-monitor/blob/master/beepic.jpg)
+
 You can see (and hear!)  the initial Live Stream on [YouTube](https://youtu.be/LGgOInSjnQQ)
  
 The architecture is as follows:
