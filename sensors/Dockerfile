@@ -12,6 +12,8 @@ RUN git clone https://github.com/adafruit/Adafruit_Python_BMP.git && cd Adafruit
 
 RUN git clone https://github.com/josecastroleon/max44009.git && cp max44009/max44009.py .
 
+RUN git clone https://github.com/Seeed-Studio/grove.py && cd grove.py && pip install .
+
 COPY scripts/ .
 
 CMD ./autorun.sh

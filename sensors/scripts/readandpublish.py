@@ -161,7 +161,8 @@ import seeed_mlx90640
 
 try:
 	mlx = seeed_mlx90640.grove_mxl90640()
-	mlx.refresh_rate = seeed_mlx90640.RefreshRate.REFRESH_8_HZ  # The fastest for raspberry 4
+	mlx.refresh_rate = seeed_mlx90640.RefreshRate.REFRESH_0_5_HZ  # Could speed this up ?
+	frame = [0] * 768
 except:
 	print("No MX90640 detected")
 
@@ -312,8 +313,8 @@ while True:
 
 	# Read in values from MLX90640
 	try:
-		 mlx.getFrame(frame)
-		client.publish(MQTT_TOPIC_PREFIX_STATE + "ir_frame", mlx);
+		mlx.getFrame(frame)
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "ir_frame", str(frame));
 	except:
 		pass
 
