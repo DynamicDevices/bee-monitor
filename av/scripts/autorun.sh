@@ -3,5 +3,5 @@
 if [[ -z "${AUTORUN}" ]]; then
  ./sleep.sh
 else
- ./stream.sh
+ ./stream.py
 fi

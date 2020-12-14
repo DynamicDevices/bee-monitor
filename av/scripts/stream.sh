@@ -1,17 +1,12 @@
 
 #!/bin/sh
 
-echo "BeeCam" > /data/info.txt
-
 amixer -c 1 set "Mic" 100%
 
 # Make sure there is a default file for the overlay text
 if [ ! -f "/data/info.txt" ]; then
     cp info.txt /data
 fi
-
-while [ True ];
-do
 
 # Set microphone volume
 amixer -c 1 set Mic 90%
@@ -53,8 +48,8 @@ FONTFILE=Verdana.ttf
 
 # GStreamer1.0
 
-export LD_LIBRARY_PATH=/opt/vc/lib
-export GST_PLUGIN_PATH=/usr/lib/gstreamer-1.0
+#export LD_LIBRARY_PATH=/opt/vc/lib
+#export GST_PLUGIN_PATH=/usr/lib/gstreamer-1.0
 
-done
+#done
 
