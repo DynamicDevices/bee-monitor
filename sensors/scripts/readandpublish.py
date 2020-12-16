@@ -252,13 +252,14 @@ while True:
 
 		# TODO: Work out how to calculate relative altitude. QNH ? METAR ?
 
+		client.publish(MQTT_TOPIC_PREFIX_STATE + "cpu_temperature_bme280", cpu_temp);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "temperature_bme280", raw_temp);
 		# Compensated temperature is not right, possibly because CPU temp is quite different
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "compensated_temperature_bme280", comp_temp);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity", humidity);
 	except:
-		pass
+#		pass
 
 	# Read in values from ADPS-9960
 	try:
