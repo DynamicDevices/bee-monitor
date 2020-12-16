@@ -90,11 +90,17 @@ from mpu9250_jmdev.registers import *
 from mpu9250_jmdev.mpu_9250 import MPU9250
 
 # Initialise the BME180
-bme180 = BMP085.BMP085(busnum=I2C_BUS)
+try:
+    bme180 = BMP085.BMP085(busnum=I2C_BUS)
+except:
+    print("Error initialising BME180")
 
 # Initialise the BME280
-bus = SMBus(I2C_BUS)
-bme280 = BME280(i2c_dev=bus, i2c_addr=0x77)
+try:
+    bus = SMBus(I2C_BUS)
+    bme280 = BME280(i2c_dev=bus, i2c_addr=0x77)
+except:
+    print("Error initialising BME280")
 
 factor = 1.2  # Smaller numbers adjust temp down, vice versa
 smooth_size = 10  # Dampens jitter due to rapid CPU temp changes
