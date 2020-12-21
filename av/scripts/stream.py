@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import os
+import time
+from subprocess import Popen
 import paho.mqtt.client as mqtt
 
 MQTT_SERVER = os.getenv('MQTT_SERVER')
@@ -59,18 +61,24 @@ while True:
     # Start processing MQTT messages
     client.loop_start();
 
+    commands = [
+      './stream.sh',
+      './stream_endo.sh',
+    ]
+
     # Run FFMPEG
     try:
-        os.system("./stream.sh")
+        processes = [Popen(cmd, shell=True) for cmd in commands]
+        # TODO: When one fails we want to kill the other...
+        for p in processes: p.wait()
     except:
         pass
 
     # Disconnect
     client.disconnect()
     while mqtt_connected:
-      sleep(0.1)
+      time.sleep(0.1)
     client.loop_stop()
 
     # Wait
-    sleep(5)
-
+    time.sleep(5)
