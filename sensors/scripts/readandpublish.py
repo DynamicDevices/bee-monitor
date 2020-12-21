@@ -81,10 +81,6 @@ try:
 except ImportError:
     from smbus import SMBus
 
-print("""temperature-and-pressure.py - Displays the temperature and pressure.
-Press Ctrl+C to exit!
-""")
-
 # MPU9250 setup
 from mpu9250_jmdev.registers import *
 from mpu9250_jmdev.mpu_9250 import MPU9250
@@ -98,7 +94,7 @@ except:
 # Initialise the BME280
 try:
     bus = SMBus(I2C_BUS)
-    bme280 = BME280(i2c_dev=bus, i2c_addr=0x77)
+    bme280 = BME280(i2c_dev=bus, i2c_addr=0x76)
 except:
     print("Error initialising BME280")
 
@@ -236,6 +232,8 @@ while True:
 
 	# Read in values from BME280 (todo: Look at if we can improve accuracy/use IIR
 	try:
+		print("Publish BME280 data")
+
 		cpu_temp = get_cpu_temperature()
 		cpu_temps.append(cpu_temp)
 
@@ -259,10 +257,12 @@ while True:
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "pressure", pressure);
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "relative_humidity", humidity);
 	except:
-#		pass
+		pass
 
 	# Read in values from ADPS-9960
 	try:
+		print("Publish ADPS-9960 data")
+
 		ambient_light = apds.readAmbientLight()
 		r = apds.readRedLight()
 		g = apds.readGreenLight()
@@ -291,6 +291,8 @@ while True:
 
 	# Read in values from MPU9250
 	try:
+		print("Publish MPU9250 data")
+
 		acc_x,acc_y,acc_z = mpu.readAccelerometerMaster()
 		gyro_x,gyro_y,gyro_z = mpu.readGyroscopeMaster()
 		magneto_x,magneto_y,magneto_z = mpu.readMagnetometerMaster()
@@ -312,6 +314,8 @@ while True:
 
 	# Read in values from MAX44009
 	try:
+		print("Publish MAX44009 data")
+
 		luminance =  max_sensor.luminosity()
 
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "luminance", luminance);
@@ -320,10 +324,13 @@ while True:
 
 	# Read in values from MLX90640
 	try:
+		print("Publish MLX90640 data")
 		mlx.getFrame(frame)
 		client.publish(MQTT_TOPIC_PREFIX_STATE + "ir_frame", str(frame));
 	except:
 		pass
+
+	print("Update sensor data to file")
 
 	# Now write to file
 	f = open("/data/info.txt.new", "w")
