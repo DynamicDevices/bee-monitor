@@ -118,6 +118,81 @@ NB. All these sensors are 3V3 as we can't connect 5V sensors directly to the Ras
 | Sensor ID | Sensor Name                                                                             | Info |
 | --------- | --------------------------------------------------------------------------------------- | ---- |
 | 0x39,0x77 | WINGONEER® Temperature, Barometric, Altitude, Light, Humidity Five in One Sensor Module | Not installed - BME180 instead and publishing currently |
+| 0x76      | BME280 temperature, humidity and pressure                                               | Pubishing data  |
 | 0x68      | MakerHawk MPU-9250 9DOF Module 9 Axis Gyroscope Accelerometer Magnetic Field Sensor     | Publishing data |
 | 0x4A      | GY-49-MAX44009 Digital Optical Intensity Flow Sensor                                    | Publishing data |
 | 0x33      | Sparkfun MLX90640 IR array                                                              | Publishing data |
+
+## EnviroPlus
+
+There's an independent sensor unit comprising a Raspberry Pi Zero and an EnviroPlus sensor module chained onto the Raspberry Pi 4.
+
+For details on the Enviroplus see [here](https://learn.pimoroni.com/tutorial/sandyj/getting-started-with-enviro-plus)
+
+We use the code in the Enviroplus repository which is [here](https://github.com/pimoroni/enviroplus-python)
+
+The code is built into a Balena docker container which is [here](https://github.com/DynamicDevices/enviroplus-docker-image)
+
+The PiZero is configured as a USB RNDIS ethernet gadget so enumerates to the Pi4 in this way.
+
+For details on how to configure the PiZero see the conversation [here](https://forums.balena.io/t/connecting-a-balena-rpi-zero-through-a-balena-rpi4/223479/6)
+
+To configure up the RPi4 make the following changes to the host BalenaOS
+
+```
+mount -o remount,rw /
+cd /lib/udev/rules.d
+vi 85-nm-unmanaged.rules
+```
+
+Change the unmanaged status to 0
+
+```
+# USB gadget device. Unmanage by default, since whatever created it      
+# might want to set it up itself (e.g. activate an ipv4.method=shared  
+# connection).                                                  
+ENV{DEVTYPE}=="gadget", ENV{NM_UNMANAGED}="0"  
+```
+
+This allows Network Manager to manage the usb device
+
+Then prevent the usb gadget from being renamed
+
+```
+vi 80-net-setup-link.rules 
+```
+
+Comment out the following lines
+
+```
+#IMPORT{builtin}="net_setup_link"
+
+#NAME=="", ENV{ID_NET_NAME}!="", NAME="$env{ID_NET_NAME}"
+```
+
+Lastly create a new file to share the network connection to the ethernet gadget
+
+```
+cd /mnt/boot/system-connections
+vi usb
+```
+
+```
+[connection]
+id=usb
+interface-name=usb0
+type=ethernet
+
+[ipv4]
+method=shared
+
+[ipv6]
+method=ignore
+```
+
+Then synchronise the filesystem and reboot
+
+```
+sync
+reboot
+```
