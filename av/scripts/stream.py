@@ -2,7 +2,8 @@
 
 import os
 import time
-from subprocess import Popen
+import logging
+import threading
 import paho.mqtt.client as mqtt
 
 MQTT_SERVER = os.getenv('MQTT_SERVER')
@@ -34,6 +35,41 @@ def on_disconnect(client, userdata, rc):
 def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
 
+#
+# Streaming threads
+#
+def main_cam_thread(name):
+    global main_cam
+    try:
+        logging.info("Thread %s: starting", name)
+        os.system("./stream.sh")
+        time.sleep(2)
+        logging.info("Thread %s: finishing", name)
+    except:
+        pass
+    main_cam = None
+
+def door_cam_thread(name):
+    global door_cam
+    try:
+        logging.info("Thread %s: starting", name)
+        os.system("./stream_endo.sh")
+        time.sleep(2)
+        logging.info("Thread %s: finishing", name)
+    except:
+        pass
+    door_cam = None
+
+main_cam = None
+door_cam = None
+
+#
+# Main
+#
+
+format = "%(asctime)s: %(message)s"
+logging.basicConfig(format=format, level=logging.INFO,datefmt="%H:%M:%S")
+
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
@@ -42,7 +78,9 @@ client.on_message = on_message
 if len(MQTT_LOGIN) > 0 and len(MQTT_PASSWORD) > 0:
         client.username_pw_set(MQTT_LOGIN, MQTT_PASSWORD)
 
-while True:
+Running = True
+
+while Running:
     # Connect / Reconnect up MQTT
     if not mqtt_connected:
         print("Connecting to broker")
@@ -58,27 +96,22 @@ while True:
         # Send birth certificate
         client.publish(MQTT_TOPIC_PREFIX_STATE + "status", "online", retain=True);
 
-    # Start processing MQTT messages
-    client.loop_start();
+    # Process MQTT messages
+    client.loop();
 
-    commands = [
-      './stream.sh',
-      './stream_endo.sh',
-    ]
+    # Check threads
+    if main_cam is None:
+        main_cam = threading.Thread(target=main_cam_thread, args=('main_cam',))
+        main_cam.start()
 
-    # Run FFMPEG
-    try:
-        processes = [Popen(cmd, shell=True) for cmd in commands]
-        # TODO: When one fails we want to kill the other...
-        for p in processes: p.wait()
-    except:
-        pass
+    if door_cam is None:
+        door_cam = threading.Thread(target=door_cam_thread, args=('door_cam',))
+        door_cam.start()
 
-    # Disconnect
-    client.disconnect()
-    while mqtt_connected:
-      time.sleep(0.1)
-    client.loop_stop()
-
-    # Wait
     time.sleep(5)
+
+# Disconnect
+client.disconnect()
+while mqtt_connected:
+  client.loop()
+  time.sleep(0.1)
