@@ -25,12 +25,14 @@ with picamera.PiCamera() as camera:
   camera.vflip = False
   camera.hflip = False
 #  camera.annotate_background = picamera.Color('black')
-  camera.annotate_foreground = picamera.Color('yellow')
-  camera.annotate_text_size = 24
-#  camera.start_recording(sys.stdout, bitrate = 2500000, format='h264')
-  camera.start_recording(sys.stdout, bitrate = 2500000, format='rgb')
+#  camera.annotate_foreground = picamera.Color('yellow')
+#  camera.annotate_text_size = 24
+  camera.start_recording(sys.stdout, bitrate = 2500000, format='h264')
+#  camera.start_recording(sys.stdout, bitrate = 2500000, format='rgb')
   while True:
-      i = datetime.now()
-      now = i.strftime('%d %b %Y - %H:%M:%S')
-      camera.annotate_text = ' BeeCam - ' + now + ' ' + 'Temp = ?'
-      camera.wait_recording(0.2)
+#      i = datetime.now()
+#      now = i.strftime('%d %b %Y - %H:%M:%S')
+#      camera.annotate_text = ' BeeCam - ' + now + ' ' + 'Temp = ?'
+#      camera.wait_recording(0.2)
+      time.sleep(1)
+
