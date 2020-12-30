@@ -37,6 +37,6 @@ FONTFILE=Verdana.ttf
 /opt/vc/bin/raspivid -o - -t 0 -w ${WIDTH} -h ${HEIGHT} -fps ${FPS} -b ${BITRATE} | \
     ffmpeg -nostats -f alsa -thread_queue_size 1024 -ac 1 -i hw:1 -f h264 -i - \
     -vf "drawtext=text='Tapestry BeeCam %{gmtime}': fontfile=${FONTFILE}: x=${POS_X}: y=${POS_Y}: fontsize=24:fontcolor=yellow@0.6: box=1: boxcolor=black@0.4" \
-    -codec:v h264_omx -b:v ${BITRATE} -c:a aac -ar 44100 -b:a 128k -f flv rtmp://a.rtmp.youtube.com/live2/${STREAM_KEY}
+    -codec:v h264_omx -b:v ${BITRATE} -c:a aac -ar 44100 -b:a 128k -f flv rtmp://${STREAM_URL}/${STREAM_KEY}
 
 #  sleep 10
