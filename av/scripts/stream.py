@@ -104,9 +104,9 @@ while Running:
         main_cam = threading.Thread(target=main_cam_thread, args=('main_cam',))
         main_cam.start()
 
-    if door_cam is None:
-        door_cam = threading.Thread(target=door_cam_thread, args=('door_cam',))
-        door_cam.start()
+#    if door_cam is None:
+#        door_cam = threading.Thread(target=door_cam_thread, args=('door_cam',))
+#        door_cam.start()
 
     time.sleep(5)
 
