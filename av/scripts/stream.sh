@@ -47,11 +47,28 @@ VOLUME_GAIN=20dB
 
 # Simplify for testing
 
+#/opt/vc/bin/raspivid -o - -t 0 -w ${WIDTH} -h ${HEIGHT} -fps ${FPS} -b ${BITRATE} | \
+#    ffmpeg \
+#    -f alsa \
+#    -thread_queue_size 1024 \
+#    -ac 1 -i hw:1 \
+#    -thread_queue_size 1024 \
+#    -f h264 -i - \
+#    -codec:v h264_omx -b:v ${BITRATE} \
+#    -filter:a "volume=${VOLUME_GAIN}" \
+#    -c:a aac -ar 44100 -b:a 128k \
+#    -f flv rtmp://${STREAM_URL}/${STREAM_KEY} \
+#    | tee /data/ffmpeg.log
+
 /opt/vc/bin/raspivid -o - -t 0 -w ${WIDTH} -h ${HEIGHT} -fps ${FPS} -b ${BITRATE} | \
     ffmpeg \
-    -f alsa -thread_queue_size 1024 -ac 1 -i hw:1 \
-    -f h264 -i - \
-    -codec:v h264_omx -b:v ${BITRATE} \
+    -f alsa \
+    -thread_queue_size 1024 \
+    -ac 1 -i hw:1 \
+    -f h264 \
+    -thread_queue_size 1024 \
+    -i - \
+    -codec:v copy \
     -filter:a "volume=${VOLUME_GAIN}" \
     -c:a aac -ar 44100 -b:a 128k \
     -f flv rtmp://${STREAM_URL}/${STREAM_KEY} \
