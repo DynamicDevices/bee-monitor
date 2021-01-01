@@ -32,14 +32,27 @@ VOLUME_GAIN=20dB
 # Overlay string
 #
 
+# This fails after some hours...
+
+#/opt/vc/bin/raspivid -o - -t 0 -w ${WIDTH} -h ${HEIGHT} -fps ${FPS} -b ${BITRATE} | \
+#    ffmpeg \
+#    -f alsa -thread_queue_size 1024 -ac 1 -i hw:1 \
+#    -f h264 -i - \
+#    -vf "drawtext=text='Tapestry BeeCam %{gmtime}': fontfile=${FONTFILE}: x=${POS_X}: y=${POS_Y}: fontsize=24:fontcolor=yellow@0.6: box=1: boxcolor=black@0.4" \
+#    -codec:v h264_omx -b:v ${BITRATE} \
+#    -filter:a "volume=${VOLUME_GAIN}" \
+#    -c:a aac -ar 44100 -b:a 128k \
+#    -f flv rtmp://${STREAM_URL}/${STREAM_KEY} \
+#    | tee /data/ffmpeg.log
+
+# Simplify for testing
+
 /opt/vc/bin/raspivid -o - -t 0 -w ${WIDTH} -h ${HEIGHT} -fps ${FPS} -b ${BITRATE} | \
     ffmpeg \
     -f alsa -thread_queue_size 1024 -ac 1 -i hw:1 \
     -f h264 -i - \
-    -vf "drawtext=text='Tapestry BeeCam %{gmtime}': fontfile=${FONTFILE}: x=${POS_X}: y=${POS_Y}: fontsize=24:fontcolor=yellow@0.6: box=1: boxcolor=black@0.4" \
     -codec:v h264_omx -b:v ${BITRATE} \
     -filter:a "volume=${VOLUME_GAIN}" \
     -c:a aac -ar 44100 -b:a 128k \
     -f flv rtmp://${STREAM_URL}/${STREAM_KEY} \
     | tee /data/ffmpeg.log
-#  sleep 10
