@@ -196,3 +196,25 @@ Then synchronise the filesystem and reboot
 sync
 reboot
 ```
+
+## Enable serial console
+
+The AV docker container is configured to load the g_cdc module on startup. This module combines an ethernet device and a serial device to enable access to/from the Pi0
+
+We implement this way as I have found that when adding the module to /etc/modules.d the Pi0 seems to fail to enumerate correctly on power up.
+
+The serial device enumerates as /dev/ttyACM0 on the host PC. It is /dev/ttyGS0 on the Pi0.
+
+To enable a serial console on the Pi0
+
+```
+mount -o remount,rw /
+cd /etc/systemd/system/getty.target.wants
+systemctl enable serial-getty\@ttyGS0.service 
+mount -o remount,ro /
+reboot
+```
+
+You can then use minicom or a similar terminal emulator to access the shell on the Pi0. 
+
+This can be useful if you have trouble with, say, ethernet connectivity
