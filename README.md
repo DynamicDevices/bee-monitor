@@ -218,3 +218,5 @@ reboot
 You can then use minicom or a similar terminal emulator to access the shell on the Pi0. 
 
 This can be useful if you have trouble with, say, ethernet connectivity
+
+When testing with e.g. an Ubuntu host set the Wired Connection for the renamed usb ethernet adaptor to "Shared with other computers"
