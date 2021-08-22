@@ -7,10 +7,10 @@ services:
       - "80"
     volumes:
       - shared-data:/data
-  sensors:
-    build: ./sensors
-    privileged: true
-    volumes:
-      - shared-data:/data
+#  sensors:
+#    build: ./sensors
+#    privileged: true
+#    volumes:
+#      - shared-data:/data
 volumes:
   shared-data:
