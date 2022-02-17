@@ -60,7 +60,7 @@ VOLUME_GAIN=20dB
 #    -f flv rtmp://${STREAM_URL}/${STREAM_KEY} \
 #    | tee /data/ffmpeg.log
 
-/opt/vc/bin/raspivid -o - -t 0 -w ${WIDTH} -h ${HEIGHT} -fps ${FPS} -b ${BITRATE} | \
+/opt/vc/bin/raspivid -o - -t 0 -vf -w ${WIDTH} -h ${HEIGHT} -fps ${FPS} -b ${BITRATE} | \
     ffmpeg \
     -use_wallclock_as_timestamps 1 \
     -f alsa \
