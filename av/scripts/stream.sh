@@ -1,7 +1,6 @@
-
 #!/bin/sh
 
-amixer -c 1 set "Mic" 100%
+amixer -c 1 set "Mic" 75%
 
 # Make sure there is a default file for the overlay text
 if [ ! -f "/data/info.txt" ]; then
