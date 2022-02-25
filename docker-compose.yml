@@ -12,5 +12,11 @@ services:
 #    privileged: true
 #    volumes:
 #      - shared-data:/data
+  monitoring:
+    build: ./monitoring
+    expose:
+      - "9090"
+    volumes:
+      - shared-data:/data
 volumes:
   shared-data:
