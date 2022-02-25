@@ -1,6 +1,10 @@
 
 FROM balenalib/raspberrypi4-64-golang
 
-RUN GO111MODULE=on go install github.com/prometheus/prometheus/cmd/...
+RUN mkdir -p $GOPATH/src/github.com/prometheus
+RUN cd $GOPATH/src/github.com/prometheus
+RUN git clone https://github.com/prometheus/prometheus.git
+RUN cd prometheus
+RUN make build
 
-CMD prometheus --config.file=your_config.yml
+CMD ./prometheus --config.file=your_config.yml
