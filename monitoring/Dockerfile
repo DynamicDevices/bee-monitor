@@ -1,5 +1,5 @@
 
-FROM balenalib/raspberrypi-4-64-golang
+FROM balenalib/raspberrypi4-64-golang
 
 RUN GO111MODULE=on go install github.com/prometheus/prometheus/cmd/...
 
