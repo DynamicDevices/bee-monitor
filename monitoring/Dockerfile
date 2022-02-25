@@ -1,6 +1,8 @@
 
 FROM balenalib/raspberrypi4-64-golang
 
+RUN install_packages npm
+
 RUN mkdir -p $GOPATH/src/github.com/prometheus
 RUN cd $GOPATH/src/github.com/prometheus
 RUN git clone https://github.com/prometheus/prometheus.git
