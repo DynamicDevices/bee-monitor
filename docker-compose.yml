@@ -7,16 +7,26 @@ services:
       - "80"
     volumes:
       - shared-data:/data
+
 #  sensors:
 #    build: ./sensors
 #    privileged: true
 #    volumes:
 #      - shared-data:/data
-  monitoring:
-    build: ./monitoring
-    expose:
-      - "9090"
+
+#  prometheus:
+#    build: ./prometheus
+#    ports:
+#      - "80:9090"
+#    volumes:
+#      - shared-data:/data
+
+  node_exporter:
+    build: ./node_exporter
+    ports:
+      - "80:9100"
     volumes:
       - shared-data:/data
+
 volumes:
   shared-data:
