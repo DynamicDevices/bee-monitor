@@ -8,4 +8,4 @@ RUN cd $GOPATH/src/github.com/prometheus
 RUN git clone https://github.com/prometheus/prometheus.git
 RUN cd prometheus && make build
 
-CMD ./prometheus --config.file=your_config.yml
+CMD cd prometheus && ./prometheus --config.file=your_config.yml
