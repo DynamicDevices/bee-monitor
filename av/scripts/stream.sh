@@ -9,14 +9,25 @@ fi
 
 # FFMPEG
 
-WIDTH=1280
-HEIGHT=720
-FPS=25
-BITRATE=2500000
 POS_X=4
 POS_Y=4
 FONTFILE=Verdana.ttf
+
+if [ -z ${WIDTH+x} ]; then
+WIDTH=1280
+fi
+if [ -z ${HEIGHT+x} ]; then
+HEIGHT=720
+fi
+if [ -z ${BITRATE+x} ]; then
+BITRATE=2500000
+fi
+if [ -z ${FPS+x} ]; then
+FPS=25
+fi
+if [ -z ${VOLUME_GAIN+x} ]; then
 VOLUME_GAIN=20dB
+fi
 
 #
 # Overlay from file
