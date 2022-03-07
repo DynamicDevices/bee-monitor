@@ -3,30 +3,21 @@ services:
   av:
     build: ./av
     privileged: true
-    expose:
-      - "80"
     volumes:
       - shared-data:/data
 
-#  sensors:
-#    build: ./sensors
-#    privileged: true
-#    volumes:
-#      - shared-data:/data
+  sensors:
+    build: ./sensors
+    privileged: true
+    volumes:
+      - shared-data:/data
 
-#  prometheus:
-#    build: ./prometheus
-#    ports:
-#      - "80:9090"
-#    volumes:
-#      - shared-data:/data
-
-  node_exporter:
-    build: ./node_exporter
+  node-exporter:
+    image: dynamicdevices/balenablock-node-exporter@sha256:9c03ad3c3c7b6201c0f5a644d5d7023e8ecb42767c55945082807e16e4eb60de
+    restart: always
+    privileged: false
     ports:
-      - "80:9100"
-    volumes:
-      - shared-data:/data
+      - '80:9100'
 
 volumes:
   shared-data:
